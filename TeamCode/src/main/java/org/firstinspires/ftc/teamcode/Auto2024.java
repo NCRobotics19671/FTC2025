@@ -30,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 @Autonomous
-public class RobotDriveAutonomous extends OpMode {
+public class Auto2024 extends OpMode {
     // Declare OpMode members.
 
     private ElapsedTime runtime = new ElapsedTime();
