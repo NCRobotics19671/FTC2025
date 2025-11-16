@@ -173,7 +173,7 @@ public class Auto2024AlteredForNew extends OpMode {
         while(getRuntime() < t){}
         Claw.setPosition(0.8);
 
-        //turnToAngle(0.05);
+
 
 
 
