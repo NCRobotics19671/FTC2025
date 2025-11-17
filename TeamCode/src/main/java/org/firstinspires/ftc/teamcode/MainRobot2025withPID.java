@@ -18,6 +18,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -29,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp
 
-public class MainRobot2025Individual extends OpMode
+public class MainRobot2025withPID extends OpMode
 {
     // Declare OpMode members.
 
@@ -38,7 +39,7 @@ public class MainRobot2025Individual extends OpMode
     private DcMotor motorFrontRight = null;
     private DcMotor motorBackLeft = null;
     private DcMotor motorBackRight = null;
-    private DcMotor Arm = null;
+    private DcMotorEx Arm = null;
     private DcMotor Alien = null;
 
     private Servo Claw = null;
@@ -87,7 +88,6 @@ public class MainRobot2025Individual extends OpMode
 
 
 
-
         // Declare our motors
         // Make sure your ID's match your configuration
         motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
@@ -95,11 +95,11 @@ public class MainRobot2025Individual extends OpMode
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
-        Arm = hardwareMap.dcMotor.get("Arm");
+        Arm = (DcMotorEx)hardwareMap.dcMotor.get("Arm");
         Alien = hardwareMap.dcMotor.get("Alien");
         Claw = hardwareMap.get(Servo.class, "Claw");
 
-
+        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -144,7 +144,7 @@ public class MainRobot2025Individual extends OpMode
         // but only if at least one is out of the range [-1, 1]
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = -(y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
+        double backLeftPower = -(y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
@@ -158,45 +158,13 @@ public class MainRobot2025Individual extends OpMode
         double botHeading = orientation.getYaw(AngleUnit.RADIANS);
 
         if(gamepad1.a) {
-            Arm.setPower(1);
+            Arm.setVelocity(-2600);
 
         }
         else {
-            if(gamepad1.y) {
-
-                Arm.setPower(-1);
-            }
-            else {
-
-                Arm.setPower(0);
-            }
-
+            Arm.setPower(0);
 
         }
-
-        if(gamepad1.b) {
-
-            Alien.setPower(
-                    1);
-        }
-        else {
-
-            if(gamepad1.x) {
-
-                Alien.setPower(1);
-            }
-            else {
-
-                Alien.setPower(0);
-            }
-
-        }
-        if(gamepad1.right_bumper){
-            Claw.setPosition(0.9);
-        }
-        else{Claw.setPosition(0.6);}
-
-
 
 
         telemetry.addData("Alien", Alien.getCurrentPosition());
