@@ -46,7 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous
 
-public class Auto2024 extends OpMode {
+public class Auto2024AlteredForNew extends OpMode {
     // Declare OpMode members.
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -167,27 +167,14 @@ public class Auto2024 extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-        driveXdir(-2,0.8);
-        driveYdir(43,0.5);
-        driveArm(84,0.5);
+        driveYdir(-10,0.5);
+        Arm.setPower(1);
+        double t = getRuntime() + 1;
+        while(getRuntime() < t){}
+        Claw.setPosition(0.8);
+
         //turnToAngle(0.05);
-        driveAlien(((float)(10.00)),0.8);
-        closeClaw();
-        driveYdir(-1,0.3);
-        driveArm(100,0.7);
-        driveAlien(((float)(10.15)),1);
-        driveYdir(-42,0.5);
-        turnToAngle(90);
-        driveArm(117,0.3);
-        driveYdir(25,0.5);
-        Claw.setPosition(0);
-        driveArm(112,0.3);
-        driveYdir(-20,0.5);
-        turnToAngle(0);
-        driveYdir(36,0.5);
-        driveAlien(((float)(5)),1);
-        driveArm(90,0.7);
-        driveAlien(((float)(10.75)),1);
+
 
 
         //drop off sample
