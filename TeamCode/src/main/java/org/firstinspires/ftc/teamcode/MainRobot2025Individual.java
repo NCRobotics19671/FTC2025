@@ -41,6 +41,7 @@ public class MainRobot2025Individual extends OpMode
     private DcMotor Arm = null;
     private DcMotor Alien = null;
 
+    private DcMotor wheel = null;
     private Servo Claw = null;
 
 
@@ -98,7 +99,7 @@ public class MainRobot2025Individual extends OpMode
         Arm = hardwareMap.dcMotor.get("Arm");
         Alien = hardwareMap.dcMotor.get("Alien");
         Claw = hardwareMap.get(Servo.class, "Claw");
-
+        wheel = hardwareMap.dcMotor.get("wheel");
 
 
         // Reverse the right side motors
@@ -177,13 +178,13 @@ public class MainRobot2025Individual extends OpMode
         if(gamepad1.b) {
 
             Alien.setPower(
-                    1);
+                    -1);
         }
         else {
 
             if(gamepad1.x) {
 
-                Alien.setPower(1);
+                Alien.setPower(-1);
             }
             else {
 
@@ -191,11 +192,41 @@ public class MainRobot2025Individual extends OpMode
             }
 
         }
-        if(gamepad1.right_bumper){
-            Claw.setPosition(0.9);
-        }
-        else{Claw.setPosition(0.6);}
+        if(gamepad1.b) {
 
+            Alien.setPower(
+                    -1);
+        }
+        else {
+
+            if(gamepad1.x) {
+
+                Alien.setPower(-1);
+            }
+            else {
+
+                Alien.setPower(0);
+            }
+
+        }
+
+        if(gamepad1.left_bumper) {
+
+            wheel.setPower(
+                    -1);
+        }
+        else {
+
+            if(gamepad1.right_bumper) {
+
+                wheel.setPower(1);
+            }
+            else {
+
+                wheel.setPower(0);
+            }
+
+        }
 
 
 
