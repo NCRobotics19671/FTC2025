@@ -163,7 +163,7 @@ public class MainRobot2025Individual extends OpMode
         if(gamepad1.b) {
 
             Alien.setPower(
-                    -1);
+                    -0.75);
         }
         else {
 
