@@ -158,22 +158,7 @@ public class MainRobot2025Individual extends OpMode
 
         double botHeading = orientation.getYaw(AngleUnit.RADIANS);
 
-        if(gamepad1.a) {
-            Arm.setPower(1);
 
-        }
-        else {
-            if(gamepad1.y) {
-
-                Arm.setPower(-1);
-            }
-            else {
-
-                Arm.setPower(0);
-            }
-
-
-        }
 
         if(gamepad1.b) {
 
@@ -192,37 +177,20 @@ public class MainRobot2025Individual extends OpMode
             }
 
         }
-        if(gamepad1.b) {
 
-            Alien.setPower(
-                    -1);
-        }
-        else {
-
-            if(gamepad1.x) {
-
-                Alien.setPower(-1);
-            }
-            else {
-
-                Alien.setPower(0);
-            }
-
-        }
 
         if(gamepad1.left_bumper) {
-
-            wheel.setPower(
-                    -1);
+            Arm.setPower(-1);
+            wheel.setPower(-1);
         }
         else {
 
             if(gamepad1.right_bumper) {
-
+                Arm.setPower(-1);
                 wheel.setPower(1);
             }
             else {
-
+                Arm.setPower(0);
                 wheel.setPower(0);
             }
 
