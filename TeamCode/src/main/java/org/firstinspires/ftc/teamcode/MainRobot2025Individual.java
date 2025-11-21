@@ -160,21 +160,27 @@ public class MainRobot2025Individual extends OpMode
 
 
 
-        if(gamepad1.b) {
+        if(gamepad1.x) {
 
             Alien.setPower(
-                    -0.75);
+                    -0.65);
         }
         else {
 
-            if(gamepad1.x) {
+            if(gamepad1.b) {
 
                 Alien.setPower(-1);
             }
-            else {
+            else{
+                if(gamepad1.dpad_up){
+                    Alien.setPower(1);
+                }
+                else {
 
-                Alien.setPower(0);
+                    Alien.setPower(0);
+                }
             }
+
 
         }
 
@@ -188,8 +194,10 @@ public class MainRobot2025Individual extends OpMode
             if(gamepad1.right_bumper) {
                 Arm.setPower(-1);
                 wheel.setPower(1);
-            }
-            else {
+            } else if (gamepad1.dpad_up) {
+                Arm.setPower(1);
+                wheel.setPower(0);
+            } else {
                 Arm.setPower(0);
                 wheel.setPower(0);
             }
