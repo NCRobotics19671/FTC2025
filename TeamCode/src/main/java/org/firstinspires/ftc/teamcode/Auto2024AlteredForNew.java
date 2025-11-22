@@ -55,6 +55,8 @@ public class Auto2024AlteredForNew extends OpMode {
     private DcMotorEx motorBackLeft = null;
     private DcMotorEx motorBackRight = null;
     private DcMotor Arm = null;
+
+    private DcMotor wheel = null;
     private DcMotor Alien = null;
 
     private Servo Claw = null;
@@ -129,9 +131,7 @@ public class Auto2024AlteredForNew extends OpMode {
         Arm = hardwareMap.dcMotor.get("Arm");
         Alien = hardwareMap.dcMotor.get("Alien");
         Claw = hardwareMap.get(Servo.class, "Claw");
-        distance = hardwareMap.get(DistanceSensor.class, "distance");
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Alien.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wheel = hardwareMap.dcMotor.get("wheel");
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -142,7 +142,6 @@ public class Auto2024AlteredForNew extends OpMode {
 
         //motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         // motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -167,13 +166,18 @@ public class Auto2024AlteredForNew extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-        driveYdir(-10,0.5);
-        Arm.setPower(1);
+        driveYdir(-15,0.5);
+        Alien.setPower(-0.75);
         double t = getRuntime() + 1;
         while(getRuntime() < t){}
-        Claw.setPosition(0.8);
-
-
+        Arm.setPower(-1);
+        wheel.setPower(1);
+        t = getRuntime() + 3;
+        while(getRuntime() < t){}
+        Alien.setPower(0);
+        Arm.setPower(0);
+        wheel.setPower(0);
+        driveXdir(-10,0.8);
 
 
 
