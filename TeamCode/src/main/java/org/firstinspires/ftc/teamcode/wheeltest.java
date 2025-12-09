@@ -21,30 +21,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
-@TeleOp(name="Basic:MainRobot2024Flipped", group="Iterative Opmode")
+@TeleOp
 
-public class MainRobot2024Altered extends OpMode
+public class wheeltest extends OpMode
 {
     // Declare OpMode members.
 
@@ -56,8 +41,8 @@ public class MainRobot2024Altered extends OpMode
     private DcMotor Arm = null;
     private DcMotor Alien = null;
 
+    private DcMotor wheel = null;
     private Servo Claw = null;
-
 
 
 
@@ -79,11 +64,7 @@ public class MainRobot2024Altered extends OpMode
 
 
 
-    double powerCoef = 0.75;
-    float left = 0;
 
-    float right = 0;
-    boolean toggleA = true;
 
     boolean toggleB = false;
 
@@ -105,7 +86,8 @@ public class MainRobot2024Altered extends OpMode
         boolean justChangedLogoDirection = false;
         boolean justChangedUsbDirection = false;
 
-       
+
+
 
         // Declare our motors
         // Make sure your ID's match your configuration
@@ -117,13 +99,8 @@ public class MainRobot2024Altered extends OpMode
         Arm = hardwareMap.dcMotor.get("Arm");
         Alien = hardwareMap.dcMotor.get("Alien");
         Claw = hardwareMap.get(Servo.class, "Claw");
+        wheel = hardwareMap.dcMotor.get("wheel");
 
-
-
-
-
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Alien.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -149,7 +126,6 @@ public class MainRobot2024Altered extends OpMode
     @Override
     public void start() {
         runtime.reset();
-
     }
 
     /*
@@ -160,7 +136,6 @@ public class MainRobot2024Altered extends OpMode
 
         // Setup a variable for each drive wheel to save power level for telemetry
 
-        double liftPower = 0;
         double y = 0.75*-gamepad1.left_stick_y * Math.abs(gamepad1.left_stick_y); // Remember, Y stick value is reversed
         double x = 0.5*gamepad1.left_stick_x * 1.1 * Math.abs(gamepad1.left_stick_x); // Counteract imperfect strafing
         double rx = (Math.abs(gamepad1.right_stick_x)/gamepad1.right_stick_x)*Math.min((gamepad1.right_stick_x * gamepad1.right_stick_x),0.5);
@@ -170,56 +145,22 @@ public class MainRobot2024Altered extends OpMode
         // but only if at least one is out of the range [-1, 1]
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = -(y + x + rx) / denominator;
-        double backLeftPower = -(y - x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-        motorFrontLeft.setPower(frontLeftPower);
-        motorBackLeft.setPower(backLeftPower);
-        motorFrontRight.setPower(frontRightPower);
-        motorBackRight.setPower(backRightPower);
-
-
-        /*double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x*1.1; //* 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
-
-        // Read inverse IMU heading, as the IMU heading is CW positive
-        */
+        motorFrontLeft.setPower(gamepad1.x? 1 : 0);
+        motorBackLeft.setPower(gamepad1.a? 1 : 0);
+        motorFrontRight.setPower(gamepad1.b? 1 : 0);
+        motorBackRight.setPower(gamepad1.y? 1 : 0);
 
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
 
         double botHeading = orientation.getYaw(AngleUnit.RADIANS);
 
-        /*
-        double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
-        double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
 
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio, but only when
-        // at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = -(rotY + rotX + rx) / denominator;
-        double backLeftPower = -(rotY - rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
 
-
-        motorFrontLeft.setPower(0.95*powerCoef*frontLeftPower);
-        motorBackLeft.setPower(powerCoef*backLeftPower);
-        motorFrontRight.setPower(powerCoef*frontRightPower);
-        motorBackRight.setPower(powerCoef*backRightPower);*/
-
-        if(gamepad1.a) {
-        Arm.setPower(1);
-        Alien.setPower(-1);
-        }
-        else {
-            Arm.setPower(0);
-            Alien.setPower(0);
-        }
-        /********End Pickup********/
 
         telemetry.addData("Alien", Alien.getCurrentPosition());
         telemetry.addData("Arm", Arm.getCurrentPosition());
@@ -232,8 +173,6 @@ public class MainRobot2024Altered extends OpMode
         telemetry.addData("servo",Claw.getPosition());
 
 
-
-        //Left trigger is squeezed but right trigger is not so we are going down
 
 
 

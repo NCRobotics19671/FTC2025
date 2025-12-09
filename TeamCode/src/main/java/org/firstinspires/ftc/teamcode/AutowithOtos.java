@@ -16,6 +16,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,9 +31,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp
+@Autonomous
 
-public class MainRobot2025Individual extends OpMode
+public class AutowithOtos extends OpMode
 {
     // Declare OpMode members.
 
@@ -48,6 +49,9 @@ public class MainRobot2025Individual extends OpMode
     private DcMotor wheel = null;
     private Servo Claw = null;
 
+    private double ki = 0.2;
+
+    private double kd = 0.1;
     SparkFunOTOS.Pose2D pos;
 
 
@@ -115,6 +119,7 @@ public class MainRobot2025Individual extends OpMode
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        configureOtos();
     }
 
     /*
@@ -130,7 +135,18 @@ public class MainRobot2025Individual extends OpMode
     @Override
     public void start() {
         runtime.reset();
-        configureOtos();
+        pos = myOtos.getPosition();
+        driveYdir(-15);
+        Alien.setPower(-0.80);
+        double t = getRuntime() + 8;
+        while(getRuntime() < t){}
+        Arm.setPower(1);
+        wheel.setPower(-1);
+        t = getRuntime() + 3;
+        while(getRuntime() < t){}
+        Alien.setPower(0);
+        Arm.setPower(0);
+        wheel.setPower(0);
     }
 
     /*
@@ -141,23 +157,6 @@ public class MainRobot2025Individual extends OpMode
 
         // Setup a variable for each drive wheel to save power level for telemetry
 
-        double y = 0.75*-gamepad1.left_stick_y * Math.abs(gamepad1.left_stick_y); // Remember, Y stick value is reversed
-        double x = 0.5*gamepad1.left_stick_x * 1.1 * Math.abs(gamepad1.left_stick_x); // Counteract imperfect strafing
-        double rx = (Math.abs(gamepad1.right_stick_x)/gamepad1.right_stick_x)*Math.min((gamepad1.right_stick_x * gamepad1.right_stick_x),0.5);
-        if (gamepad1.right_stick_x == 0){rx = 0;}
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio,
-        // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = -(y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double frontRightPower = (y - x - rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
-
-        motorFrontLeft.setPower(frontLeftPower);
-        motorBackLeft.setPower(backLeftPower);
-        motorFrontRight.setPower(frontRightPower);
-        motorBackRight.setPower(backRightPower);
 
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
 
@@ -165,55 +164,6 @@ public class MainRobot2025Individual extends OpMode
 
 
 
-        if(gamepad1.x) {
-
-            Alien.setPower(
-                    -0.85);
-        }
-        else {
-
-            if(gamepad1.b) {
-
-                Alien.setPower(-1);
-            } else if (gamepad1.y) {
-                Alien.setPower(-0.75);
-            } else if (gamepad1.a) {
-                Alien.setPower(-0.65);
-            } else{
-                if(gamepad1.dpad_up){
-                    Alien.setPower(1);
-                }
-                else {
-
-                    Alien.setPower(0);
-                }
-            }
-
-
-        }
-
-
-        if(gamepad1.left_bumper) {
-            Arm.setPower(1);
-            wheel.setPower(1);
-            pickup.setPower(-0.25);
-        }
-        else {
-
-            if(gamepad1.right_bumper) {
-                Arm.setPower(1);
-                wheel.setPower(-1);
-            } else if (gamepad1.dpad_up) {
-                Arm.setPower(-1);
-                wheel.setPower(0);
-                pickup.setPower(1);
-            } else {
-                Arm.setPower(0);
-                wheel.setPower(0);
-                pickup.setPower(0);
-            }
-
-        }
 
 
         pos = myOtos.getPosition();
@@ -348,5 +298,28 @@ public class MainRobot2025Individual extends OpMode
         telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
         telemetry.update();
+    }
+    private void driveYdir(double dist){
+        double target = pos.y + dist;
+        double epsilon = 0.5;
+        double error = (target-pos.y);
+        while(Math.abs(error)>epsilon){
+            pos = myOtos.getPosition();
+            error = (target-pos.y);
+            double motorpower = Math.max(-1,Math.min(1,(ki*error)));
+            motorFrontLeft.setPower(-motorpower);
+            motorBackLeft.setPower(motorpower);
+            motorFrontRight.setPower(motorpower);
+            motorBackRight.setPower(motorpower);
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
+            telemetry.update();
+        }
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
+
     }
 }

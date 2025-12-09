@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -50,17 +51,17 @@ public class Auto2024AlteredForNew extends OpMode {
     // Declare OpMode members.
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx motorFrontLeft = null;
-    private DcMotorEx motorFrontRight = null;
-    private DcMotorEx motorBackLeft = null;
-    private DcMotorEx motorBackRight = null;
+    private DcMotor motorFrontLeft = null;
+    private DcMotor motorFrontRight = null;
+    private DcMotor motorBackLeft = null;
+    private DcMotor motorBackRight = null;
     private DcMotor Arm = null;
 
     private DcMotor wheel = null;
     private DcMotor Alien = null;
 
     private Servo Claw = null;
-    DistanceSensor distance;
+
     double kP = 0.5; // to be tuned
     double kI = 0.15;  // to be tuned]
     double kD = 0.00;  // to be tuned
@@ -123,10 +124,10 @@ public class Auto2024AlteredForNew extends OpMode {
 
         // Declare our motors
         // Make sure your ID's match your configuration
-        motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
-        motorBackLeft = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
-        motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
-        motorBackRight = hardwareMap.get(DcMotorEx.class, "motorBackRight");
+        motorFrontLeft = hardwareMap.get(DcMotor.class, "motorFrontLeft");
+        motorBackLeft = hardwareMap.get(DcMotor.class, "motorBackLeft");
+        motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight");
+        motorBackRight = hardwareMap.get(DcMotor.class, "motorBackRight");
 
         Arm = hardwareMap.dcMotor.get("Arm");
         Alien = hardwareMap.dcMotor.get("Alien");
@@ -140,8 +141,8 @@ public class Auto2024AlteredForNew extends OpMode {
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
 
-        //motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        // motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -166,9 +167,9 @@ public class Auto2024AlteredForNew extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-        driveYdir(-15,0.5);
-        Alien.setPower(-0.75);
-        double t = getRuntime() + 1;
+        driveYdir(20,0.5);
+        Alien.setPower(-1);
+        double t = getRuntime() + 8;
         while(getRuntime() < t){}
         Arm.setPower(-1);
         wheel.setPower(1);
@@ -177,7 +178,7 @@ public class Auto2024AlteredForNew extends OpMode {
         Alien.setPower(0);
         Arm.setPower(0);
         wheel.setPower(0);
-        driveXdir(-10,0.8);
+        driveXdir(10,0.8);
 
 
 
@@ -193,7 +194,7 @@ public class Auto2024AlteredForNew extends OpMode {
     @Override
     public void loop() {
 
-        distl = distance.getDistance(DistanceUnit.INCH);
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Yaw (Z)", "%.2f Rad. (Heading)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
@@ -212,6 +213,7 @@ public class Auto2024AlteredForNew extends OpMode {
 
     @Override
     public void stop() {
+
     }
 
     void updateOrientation() {
@@ -294,137 +296,271 @@ public class Auto2024AlteredForNew extends OpMode {
     // Reverse left motors if you are using NeveRests
 
 
-    public void driveYdir(double distance, double power) {
+//    public void driveYdir(double distance, double power) {
+//        //
+//        double sign = distance/Math.abs(distance);
+//        distance = Math.abs(distance);
+//        distance = distance;
+//        double rpm = power * 500;
+//        double speed = ((rpm*3*Math.PI)/60);
+//        double inverse = 1/speed;
+//        double addtime = distance * inverse;
+//        //double StrafeRotations = 30/circumference;
+//        //int StrafeDrivingTarget =  (int)(StrafeRotations*MOTOR_TICK_COUNTS);
+//        double startt = getRuntime();
+//        double t = getRuntime();
+//        power = sign *power;
+//        double velocity = -(rpm * (1/60) * 336);
+//        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//
+//
+//
+//        motorFrontLeft.setVelocity(-velocity);
+//        motorBackLeft.setVelocity(-velocity);
+//        motorFrontRight.setVelocity(-velocity);
+//        motorBackRight.setVelocity(-velocity);
+//        motorFrontLeft.setPower(-power);
+//        motorBackLeft.setPower(-power);
+//        motorFrontRight.setPower(-power);
+//        motorBackRight.setPower(-power);
+//        double endt = (getRuntime() + addtime);
+//        while (t < endt) {
+//            telemetry.addData("Right Front", motorFrontRight.getCurrentPosition());
+//            telemetry.addData("Left Front", motorFrontLeft.getCurrentPosition());
+//            telemetry.addData("Right Back", motorBackRight.getCurrentPosition());
+//            telemetry.addData("Left Back", motorBackLeft.getCurrentPosition());
+//            t = getRuntime();
+//        }
+//        motorFrontLeft.setPower(0);
+//        motorBackLeft.setPower(0);
+//        motorFrontRight.setPower(0);
+//        motorBackRight.setPower(0);
+//        motorFrontLeft.setVelocity(0);
+//        motorBackLeft.setVelocity(0);
+//        motorFrontRight.setVelocity(0);
+//        motorBackRight.setVelocity(0);
+//
+//    }
+//
+//    public void driveXdir(double distance, double power) {
+//
+//        double sign = distance/Math.abs(distance);
+//        distance = Math.abs(distance)/0.5;
+//        double rpm = power * 500;
+//        double speed = ((rpm*3*Math.PI)/60);
+//        double inverse = 1/speed;
+//        double addtime = distance * inverse;
+//        //double StrafeRotations = 30/circumference;
+//        //int StrafeDrivingTarget =  (int)(StrafeRotations*MOTOR_TICK_COUNTS);
+//        double startt = getRuntime();
+//        double t = getRuntime();
+//
+//        power = sign *power;
+//        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//
+//
+//
+//        motorFrontLeft.setPower(-power);
+//        motorBackLeft.setPower(power);
+//        motorFrontRight.setPower(power);
+//        motorBackRight.setPower(-power);
+//
+//        double endt = (getRuntime() + addtime);
+//        while (t < endt) {
+//            telemetry.addData("Right Front", motorFrontRight.getCurrentPosition());
+//            telemetry.addData("Left Front", motorFrontLeft.getCurrentPosition());
+//            telemetry.addData("Right Back", motorBackRight.getCurrentPosition());
+//            telemetry.addData("Left Back", motorBackLeft.getCurrentPosition());
+//            t = getRuntime();
+//        }
+//        motorFrontLeft.setPower(0);
+//        motorBackLeft.setPower(0);
+//        motorFrontRight.setPower(0);
+//        motorBackRight.setPower(0);
+//    }
+
+
+//    public void driveYdir(int distance, double power) {
+//        //
+//
+//        //double StrafeRotations = 30/circumference;
+//        //int StrafeDrivingTarget =  (int)(StrafeRotations*MOTOR_TICK_COUNTS);
+//        double rotationsNeeded = distance/circumference;
+//        int encoderDrivingTarget =  (int)(rotationsNeeded*MOTOR_TICK_COUNTS);
+//
+//        int leftFront = encoderDrivingTarget;
+//        int leftBack = encoderDrivingTarget;
+//        int rightFront = -encoderDrivingTarget;
+//        int rightBack = -encoderDrivingTarget;
+//
+//        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        motorFrontLeft.setTargetPosition(leftFront);
+//        motorBackLeft.setTargetPosition(leftBack);
+//        motorFrontRight.setTargetPosition(rightFront);
+//        motorBackRight.setTargetPosition(rightBack);
+//
+//        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        motorFrontLeft.setPower(power);
+//        motorBackLeft.setPower(power);
+//        motorFrontRight.setPower(power);
+//        motorBackRight.setPower(power);
+//
+//        while(motorBackLeft.isBusy() && motorBackRight.isBusy()){
+//            telemetry.addData("Right Front", motorFrontRight.getCurrentPosition());
+//            telemetry.addData("Left Front", motorFrontLeft.getCurrentPosition());
+//            telemetry.addData("Right Back", motorBackRight.getCurrentPosition());
+//            telemetry.addData("Left Back", motorBackLeft.getCurrentPosition());
+//        }
+//        motorFrontLeft.setPower(0);
+//        motorBackLeft.setPower(0);
+//        motorFrontRight.setPower(0);
+//        motorBackRight.setPower(0);
+//    }
+//    public void driveXdir(int distance, double power) {
+//
+//
+//        //double StrafeRotations = 30/circumference;
+//        //int StrafeDrivingTarget =  (int)(StrafeRotations*MOTOR_TICK_COUNTS);
+//        double rotationsNeeded = distance/circumference;
+//        int encoderDrivingTarget =  (int)(rotationsNeeded*MOTOR_TICK_COUNTS);
+//
+//        int leftFront = encoderDrivingTarget;
+//        int leftBack = encoderDrivingTarget;
+//        int rightFront = encoderDrivingTarget;
+//        int rightBack = encoderDrivingTarget;
+//
+//        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        motorFrontLeft.setTargetPosition(leftFront);
+//        motorBackLeft.setTargetPosition(-1*leftBack);
+//        motorFrontRight.setTargetPosition(-1*rightFront);
+//        motorBackRight.setTargetPosition(rightBack);
+//
+//        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        motorFrontLeft.setPower(power);
+//        motorBackLeft.setPower(power);
+//        motorFrontRight.setPower(power);
+//        motorBackRight.setPower(power);
+//
+//        while(motorBackLeft.isBusy() && motorBackRight.isBusy()){
+//
+//        }
+//
+//    }
+
+    public void driveYdir(int distance, double power) {
         //
-        double sign = distance/Math.abs(distance);
-        distance = Math.abs(distance);
-        distance = distance;
-        double rpm = power * 500;
-        double speed = ((rpm*3*Math.PI)/60);
-        double inverse = 1/speed;
-        double addtime = distance * inverse;
+
         //double StrafeRotations = 30/circumference;
         //int StrafeDrivingTarget =  (int)(StrafeRotations*MOTOR_TICK_COUNTS);
-        double startt = getRuntime();
-        double t = getRuntime();
-        power = sign *power;
-        double velocity = -(rpm * (1/60) * 336);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double rotationsNeeded = distance/circumference;
+        int encoderDrivingTarget =  (int)(rotationsNeeded*MOTOR_TICK_COUNTS);
 
+        int leftFront = -encoderDrivingTarget;
+        int leftBack = -encoderDrivingTarget;
+        int rightFront = -encoderDrivingTarget;
+        int rightBack = -encoderDrivingTarget;
 
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        motorFrontLeft.setTargetPosition(-leftFront);
+        motorBackLeft.setTargetPosition(leftBack);
+        motorFrontRight.setTargetPosition(rightFront);
+        motorBackRight.setTargetPosition(rightBack);
 
-        motorFrontLeft.setVelocity(-velocity);
-        motorBackLeft.setVelocity(-velocity);
-        motorFrontRight.setVelocity(-velocity);
-        motorBackRight.setVelocity(-velocity);
-        motorFrontLeft.setPower(-power);
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(-power);
-        motorBackRight.setPower(-power);
-        double endt = (getRuntime() + addtime);
-        while (t < endt) {
-            telemetry.addData("Right Front", motorFrontRight.getCurrentPosition());
-            telemetry.addData("Left Front", motorFrontLeft.getCurrentPosition());
-            telemetry.addData("Right Back", motorBackRight.getCurrentPosition());
-            telemetry.addData("Left Back", motorBackLeft.getCurrentPosition());
-            t = getRuntime();
-        }
-        motorFrontLeft.setPower(0);
-        motorBackLeft.setPower(0);
-        motorFrontRight.setPower(0);
-        motorBackRight.setPower(0);
-        motorFrontLeft.setVelocity(0);
-        motorBackLeft.setVelocity(0);
-        motorFrontRight.setVelocity(0);
-        motorBackRight.setVelocity(0);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    }
-
-    public void driveXdir(double distance, double power) {
-
-        double sign = distance/Math.abs(distance);
-        distance = Math.abs(distance)/0.5;
-        double rpm = power * 500;
-        double speed = ((rpm*3*Math.PI)/60);
-        double inverse = 1/speed;
-        double addtime = distance * inverse;
-        //double StrafeRotations = 30/circumference;
-        //int StrafeDrivingTarget =  (int)(StrafeRotations*MOTOR_TICK_COUNTS);
-        double startt = getRuntime();
-        double t = getRuntime();
-
-        power = sign *power;
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-
-
-        motorFrontLeft.setPower(-power);
+        motorFrontLeft.setPower(power);
         motorBackLeft.setPower(power);
         motorFrontRight.setPower(power);
-        motorBackRight.setPower(-power);
+        motorBackRight.setPower(power);
 
-        double endt = (getRuntime() + addtime);
-        while (t < endt) {
+        while(motorBackLeft.isBusy() && motorBackRight.isBusy()){
             telemetry.addData("Right Front", motorFrontRight.getCurrentPosition());
             telemetry.addData("Left Front", motorFrontLeft.getCurrentPosition());
             telemetry.addData("Right Back", motorBackRight.getCurrentPosition());
             telemetry.addData("Left Back", motorBackLeft.getCurrentPosition());
-            t = getRuntime();
         }
         motorFrontLeft.setPower(0);
         motorBackLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
     }
-    public void driveArm(int angle, double power) {
-        double turnco = 0;
-        double pos = 0;
-        dist1 = distl;
-        dist2 = dist1;
-        dist3 = dist2;
-        dist1 = distance.getDistance(DistanceUnit.INCH);
-        dist = ((dist1 + dist2+dist3)/3);
-        Arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        previousError = 0;
-        integral = 0;
-        double target = 3.25*Math.tan((angle-90)*(Math.PI/180))+10.5;
-        double error = target - dist;
-        double b = getRuntime();
-        double dt = 0.001;
-        while(Math.abs(target - dist) > 0.05){
-            dist3 = dist2;
-            dist2 = dist1;
-            dist1 = distance.getDistance(DistanceUnit.INCH);
-            dist = ((dist1 + dist2 + dist3)/3);
-            previousError = error;
-            b = getRuntime();
-            error = target - dist;
-            integral = integral + error * dt;
-            power = (kP*error + kI*integral);
-            double denom = Math.max(Math.abs(power),1);
-            power = power/denom;
-            Arm.setPower(power);
-            dt = getRuntime()-b;
+    public void driveXdir(int distance, double power) {
 
 
+        //double StrafeRotations = 30/circumference;
+        //int StrafeDrivingTarget =  (int)(StrafeRotations*MOTOR_TICK_COUNTS);
+        double rotationsNeeded = distance/circumference;
+        int encoderDrivingTarget =  (int)(rotationsNeeded*MOTOR_TICK_COUNTS);
 
+        int leftFront = encoderDrivingTarget;
+        int leftBack = encoderDrivingTarget;
+        int rightFront = encoderDrivingTarget;
+        int rightBack = encoderDrivingTarget;
+
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFrontLeft.setTargetPosition(-leftFront);
+        motorBackLeft.setTargetPosition(-1*leftBack);
+        motorFrontRight.setTargetPosition(-1*rightFront);
+        motorBackRight.setTargetPosition(rightBack);
+
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(power);
+        motorBackRight.setPower(power);
+
+        while(motorBackLeft.isBusy() && motorBackRight.isBusy()){
 
         }
 
-
-        Arm.setPower(0);
-
-
-
     }
+
+
+
+
+
+
+
+
 
     public void driveAlien(float distance, double power) {
 
