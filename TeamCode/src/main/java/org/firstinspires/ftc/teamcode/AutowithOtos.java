@@ -49,9 +49,9 @@ public class AutowithOtos extends OpMode
     private DcMotor wheel = null;
     private Servo Claw = null;
 
-    private double ki = 0.2;
+    public double ki = 0.15;
 
-    private double kd = 0.1;
+    public double kd = 0.1;
     SparkFunOTOS.Pose2D pos;
 
 
@@ -112,7 +112,12 @@ public class AutowithOtos extends OpMode
         myOtos = hardwareMap.get(SparkFunOTOS.class, "otos");
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
@@ -136,17 +141,17 @@ public class AutowithOtos extends OpMode
     public void start() {
         runtime.reset();
         pos = myOtos.getPosition();
-        driveYdir(-15);
-        Alien.setPower(-0.80);
-        double t = getRuntime() + 8;
-        while(getRuntime() < t){}
-        Arm.setPower(1);
-        wheel.setPower(-1);
-        t = getRuntime() + 3;
-        while(getRuntime() < t){}
-        Alien.setPower(0);
-        Arm.setPower(0);
-        wheel.setPower(0);
+        driveYdir(10);
+//        Alien.setPower(-0.80);
+//        double t = getRuntime() + 8;
+//        while(getRuntime() < t){}
+//        Arm.setPower(1);
+//        wheel.setPower(-1);
+//        t = getRuntime() + 3;
+//        while(getRuntime() < t){}
+//        Alien.setPower(0);
+//        Arm.setPower(0);
+//        wheel.setPower(0);
     }
 
     /*
@@ -208,8 +213,8 @@ public class AutowithOtos extends OpMode
 
     }
     void updateOrientation() {
-        RevHubOrientationOnRobot.LogoFacingDirection logo = logoFacingDirections[logoFacingDirectionPosition];
-        RevHubOrientationOnRobot.UsbFacingDirection usb = usbFacingDirections[usbFacingDirectionPosition];
+        RevHubOrientationOnRobot.LogoFacingDirection logo = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usb = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
         try {
             RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logo, usb);
             imu.initialize(new IMU.Parameters(orientationOnRobot));
@@ -262,7 +267,7 @@ public class AutowithOtos extends OpMode
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        myOtos.setLinearScalar(1.172);
+        myOtos.setLinearScalar(1.2);
         myOtos.setAngularScalar(1.0035);
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
@@ -300,17 +305,26 @@ public class AutowithOtos extends OpMode
         telemetry.update();
     }
     private void driveYdir(double dist){
+        pos = myOtos.getPosition();
         double target = pos.y + dist;
-        double epsilon = 0.5;
+        double epsilon = 0.1;
+        double derivative;
+
+        double t = getRuntime() - 1;
         double error = (target-pos.y);
+        double preverror = error;
         while(Math.abs(error)>epsilon){
+
             pos = myOtos.getPosition();
             error = (target-pos.y);
-            double motorpower = Math.max(-1,Math.min(1,(ki*error)));
-            motorFrontLeft.setPower(-motorpower);
+            derivative = (error-preverror)/(getRuntime()-t);
+            t = getRuntime();
+            double motorpower = Math.max(-1,Math.min(1,(ki*error+kd*derivative)));
+            motorFrontLeft.setPower(motorpower);
             motorBackLeft.setPower(motorpower);
             motorFrontRight.setPower(motorpower);
             motorBackRight.setPower(motorpower);
+            preverror = error;
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
             telemetry.addData("Heading angle", pos.h);
