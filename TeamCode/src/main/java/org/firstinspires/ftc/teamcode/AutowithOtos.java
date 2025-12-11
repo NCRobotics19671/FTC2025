@@ -49,9 +49,9 @@ public class AutowithOtos extends OpMode
     private DcMotor wheel = null;
     private Servo Claw = null;
 
-    public double ki = 0.15;
+    public double ki = 0.23;
 
-    public double kd = 0.1;
+    public double kd = 0.05;
     SparkFunOTOS.Pose2D pos;
 
 
@@ -304,7 +304,9 @@ public class AutowithOtos extends OpMode
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
         telemetry.update();
     }
+
     private void driveYdir(double dist){
+        dist = dist/1.2;
         pos = myOtos.getPosition();
         double target = pos.y + dist;
         double epsilon = 0.1;
@@ -323,6 +325,39 @@ public class AutowithOtos extends OpMode
             motorFrontLeft.setPower(motorpower);
             motorBackLeft.setPower(motorpower);
             motorFrontRight.setPower(motorpower);
+            motorBackRight.setPower(motorpower);
+            preverror = error;
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
+            telemetry.update();
+        }
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
+
+    }
+    private void driveXdir(double dist){
+        dist = dist/1.2;
+        pos = myOtos.getPosition();
+        double target = pos.x + dist;
+        double epsilon = 0.1;
+        double derivative;
+
+        double t = getRuntime() - 1;
+        double error = (target-pos.x);
+        double preverror = error;
+        while(Math.abs(error)>epsilon){
+
+            pos = myOtos.getPosition();
+            error = (target-pos.x);
+            derivative = (error-preverror)/(getRuntime()-t);
+            t = getRuntime();
+            double motorpower = Math.max(-1,Math.min(1,(ki*error+kd*derivative)));
+            motorFrontLeft.setPower(motorpower);
+            motorBackLeft.setPower(-motorpower);
+            motorFrontRight.setPower(-motorpower);
             motorBackRight.setPower(motorpower);
             preverror = error;
             telemetry.addData("X coordinate", pos.x);
