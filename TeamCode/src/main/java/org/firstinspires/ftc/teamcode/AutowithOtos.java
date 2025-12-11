@@ -49,7 +49,7 @@ public class AutowithOtos extends OpMode
     private DcMotor wheel = null;
     private Servo Claw = null;
 
-    public double ki = 0.23;
+    public double ki = 0.45;
 
     public double kd = 0.05;
     SparkFunOTOS.Pose2D pos;
@@ -141,7 +141,7 @@ public class AutowithOtos extends OpMode
     public void start() {
         runtime.reset();
         pos = myOtos.getPosition();
-        driveYdir(10);
+        turntoangle(90);
 //        Alien.setPower(-0.80);
 //        double t = getRuntime() + 8;
 //        while(getRuntime() < t){}
@@ -309,7 +309,7 @@ public class AutowithOtos extends OpMode
         dist = dist/1.2;
         pos = myOtos.getPosition();
         double target = pos.y + dist;
-        double epsilon = 0.1;
+        double epsilon = 0.3;
         double derivative;
 
         double t = getRuntime() - 1;
@@ -326,10 +326,12 @@ public class AutowithOtos extends OpMode
             motorBackLeft.setPower(motorpower);
             motorFrontRight.setPower(motorpower);
             motorBackRight.setPower(motorpower);
+
             preverror = error;
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
             telemetry.addData("Heading angle", pos.h);
+
             telemetry.update();
         }
         motorFrontLeft.setPower(0);
@@ -339,10 +341,10 @@ public class AutowithOtos extends OpMode
 
     }
     private void driveXdir(double dist){
-        dist = dist/1.2;
+        dist = dist/1.1;
         pos = myOtos.getPosition();
         double target = pos.x + dist;
-        double epsilon = 0.1;
+        double epsilon = 0.5;
         double derivative;
 
         double t = getRuntime() - 1;
@@ -354,7 +356,7 @@ public class AutowithOtos extends OpMode
             error = (target-pos.x);
             derivative = (error-preverror)/(getRuntime()-t);
             t = getRuntime();
-            double motorpower = Math.max(-1,Math.min(1,(ki*error+kd*derivative)));
+            double motorpower = Math.max(-1,Math.min(1,(0.5*error+kd*derivative)));
             motorFrontLeft.setPower(motorpower);
             motorBackLeft.setPower(-motorpower);
             motorFrontRight.setPower(-motorpower);
@@ -369,6 +371,43 @@ public class AutowithOtos extends OpMode
         motorBackLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
+
+    }
+    private void turntoangle(double ang){
+        //dist = dist/1.1;
+        //pos = myOtos.getPosition();
+        double botheading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double target = ang;
+        double epsilon = 0.3;
+        double derivative;
+
+        double t = getRuntime() - 1;
+        double error = (target-botheading);
+        double preverror = error;
+        while(Math.abs(error)>epsilon){
+
+            //pos = myOtos.getPosition();
+            botheading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            error = (target-botheading);
+            derivative = (error-preverror)/(getRuntime()-t);
+            t = getRuntime();
+            double motorpower = Math.max(-1,Math.min(1,(0.5*error+kd*derivative)));
+            motorFrontLeft.setPower(motorpower);
+            motorBackLeft.setPower(motorpower);
+            motorFrontRight.setPower(-motorpower);
+            motorBackRight.setPower(-motorpower);
+            preverror = error;
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
+            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+        }
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
+
 
     }
 }

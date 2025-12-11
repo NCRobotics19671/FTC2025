@@ -258,8 +258,8 @@ public class MainRobot2025Individual extends OpMode
 
     }
     void updateOrientation() {
-        RevHubOrientationOnRobot.LogoFacingDirection logo = logoFacingDirections[logoFacingDirectionPosition];
-        RevHubOrientationOnRobot.UsbFacingDirection usb = usbFacingDirections[usbFacingDirectionPosition];
+        RevHubOrientationOnRobot.LogoFacingDirection logo = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usb = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
         try {
             RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logo, usb);
             imu.initialize(new IMU.Parameters(orientationOnRobot));
@@ -349,4 +349,5 @@ public class MainRobot2025Individual extends OpMode
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
         telemetry.update();
     }
+
 }
