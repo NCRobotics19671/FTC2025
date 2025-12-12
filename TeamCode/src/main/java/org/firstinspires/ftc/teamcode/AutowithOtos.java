@@ -377,7 +377,7 @@ public class AutowithOtos extends OpMode
         //dist = dist/1.1;
         //pos = myOtos.getPosition();
         double botheading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        double target = ang;
+        double target = ang/2;
         double epsilon = 0.3;
         double derivative;
 
@@ -391,15 +391,15 @@ public class AutowithOtos extends OpMode
             error = (target-botheading);
             derivative = (error-preverror)/(getRuntime()-t);
             t = getRuntime();
-            double motorpower = Math.max(-1,Math.min(1,(0.5*error+kd*derivative)));
-            motorFrontLeft.setPower(motorpower);
-            motorBackLeft.setPower(motorpower);
-            motorFrontRight.setPower(-motorpower);
-            motorBackRight.setPower(-motorpower);
+            double motorpower = Math.max(-1,Math.min(1,(0.35*error+kd*derivative)));
+            motorFrontLeft.setPower(-motorpower);
+            motorBackLeft.setPower(-motorpower);
+            motorFrontRight.setPower(motorpower);
+            motorBackRight.setPower(motorpower);
             preverror = error;
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("Heading angle", pos.h);
+            //telemetry.addData("Heading angle", pos.h);
             telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
         }

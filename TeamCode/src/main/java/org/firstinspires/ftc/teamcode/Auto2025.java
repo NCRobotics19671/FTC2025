@@ -112,11 +112,11 @@ public class Auto2025 extends OpMode {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+//        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
 
 
         // Tell the driver that initialization is complete.
@@ -138,7 +138,7 @@ public class Auto2025 extends OpMode {
     public void start() {
         runtime.reset();
 
-        driveYdir(-10, 0.1);
+        turntoangle(90);
 
     }
 
@@ -167,8 +167,8 @@ public class Auto2025 extends OpMode {
     }
 
     void updateOrientation() {
-        RevHubOrientationOnRobot.LogoFacingDirection logo = logoFacingDirections[logoFacingDirectionPosition];
-        RevHubOrientationOnRobot.UsbFacingDirection usb = usbFacingDirections[usbFacingDirectionPosition];
+        RevHubOrientationOnRobot.LogoFacingDirection logo = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        RevHubOrientationOnRobot.UsbFacingDirection usb = RevHubOrientationOnRobot.UsbFacingDirection.UP;
         try {
             RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logo, usb);
             imu.initialize(new IMU.Parameters(orientationOnRobot));
@@ -178,54 +178,40 @@ public class Auto2025 extends OpMode {
         }
     }
 
-    public void turnToAngle(int targetAngle) {
-        double turnco = 0;
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    private void turntoangle(double ang){
+        //dist = dist/1.1;
+        //pos = myOtos.getPosition();
         double botheading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        if (botheading > targetAngle) {
-        }
-
-        motorBackLeft.setPower(turnco * 0.01);
-        motorBackRight.setPower(-turnco * 0.01);
-        motorFrontLeft.setPower(turnco *0.01);
-        motorFrontRight.setPower(-turnco * 0.01);
-        /*double t = getRuntime();
-        double error = targetAngle - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double target = ang;
+        double epsilon = 0.3;
         double derivative;
-        while (Math.abs(error) > 0.5) { // 1 degree tolerance
-            boolean ready = false;
-            error = targetAngle - imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-            integral += error * 0.01; // Assume loop time of 0.01 seconds
-            derivative = (error - previousError) / 0.01;
 
-            double power = Math.min((kP * error + kI * integral + kD * derivative),1);
-            motorBackLeft.setPower(power);
-            motorBackRight.setPower(power);
-            motorFrontLeft.setPower(power);
-            motorFrontRight.setPower(power);
+        double t = getRuntime() - 1;
+        double error = (target-botheading);
+        double preverror = error;
+        while(Math.abs(error)>epsilon){
 
-            previousError = error;
+            //pos = myOtos.getPosition();
+            botheading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            error = (target-botheading);
+            derivative = (error-preverror)/(getRuntime()-t);
+            t = getRuntime();
+            double motorpower = Math.max(-1,Math.min(1,(0.35*error+0.05*derivative)));
+            motorFrontLeft.setPower(motorpower);
+            motorBackLeft.setPower(motorpower);
+            motorFrontRight.setPower(motorpower);
+            motorBackRight.setPower(motorpower);
+            preverror = error;
 
-            telemetry.addData("Error", error);
+            //telemetry.addData("Heading angle", pos.h);
             telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-            telemetry.addData("Power", power);
             telemetry.update();
+        }
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
 
-            while (!ready) {
-                if (getRuntime() - t >= 0.01) {
-                    ready = true;
-                    telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
-                }
-            }
-            // Stop the motors
-            motorBackLeft.setPower(0);
-            motorBackRight.setPower(0);
-            motorFrontLeft.setPower(0);
-            motorFrontRight.setPower(0);
-*/
 
     }
 
