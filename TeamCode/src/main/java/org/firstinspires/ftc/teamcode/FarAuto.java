@@ -140,7 +140,7 @@ public class FarAuto extends OpMode
     public void start() {
         runtime.reset();
         pos = myOtos.getPosition();
-        
+        driveXdir(-10);
 
 
     }
