@@ -32,7 +32,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
 
-public class FarAutoBlue extends OpMode
+public class FarAutoRed extends OpMode
 {
     // Declare OpMode members.
 
