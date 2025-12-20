@@ -34,7 +34,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
 
-public class AutoBlueSide extends OpMode
+public class AutoRedSide extends OpMode
 {
     // Declare OpMode members.
 
