@@ -142,7 +142,7 @@ public class AutowithOtos2 extends OpMode
     public void start() {
         runtime.reset();
         pos = myOtos.getPosition();
-        DrivetoCoords(0,0,90)
+        DrivetoCoords(0,0,90);
         /*driveYdir(-30);
         turntoangle(0);
         shoot(-1300);
@@ -451,39 +451,39 @@ public class AutowithOtos2 extends OpMode
         Alien.setPower(0);
     }
     private void DrivetoCoords(double x, double y, double h){
-        x = x/1.2
-        y = y/1.2
+        x = x/1.2;
+        y = y/1.2;
         pos = myOtos.getPosition();
         double ytarget = y;
         double xtarget = x;
         double htarget = h;
-        double epsilon = 0.3;
+        double epsilon = 0.1;
         double xderivative;
-        double yderivative
-        double hderivative
+        double yderivative;
+        double hderivative;
         double t = getRuntime() - 1;
         double yerror = (ytarget-pos.y);
         double xerror = (xtarget-pos.x);
         double herror = (htarget-pos.h);
         double prevxerror = xerror;
         double prevyerror = yerror;
-        double prevherror = herror
-        while(Math.abs(xerror)>epsilon && Math.abs(yerror)>epsilon && Math.abs(herror)>epsilon){
+        double prevherror = herror;
+        while(Math.abs(xerror)>epsilon || Math.abs(yerror)>epsilon || Math.abs(herror)>epsilon){
 
             pos = myOtos.getPosition();
             yerror = (ytarget-pos.y);
             xerror = (xtarget-pos.x);
             herror = (htarget-pos.h);
             xderivative = (xerror-prevxerror)/(getRuntime()-t);
-            yderivative = (yerror-prevyerror)/(getRuntime()-t)
+            yderivative = (yerror-prevyerror)/(getRuntime()-t);
             hderivative = (herror-prevherror)/(getRuntime()-t);
             t = getRuntime();
-            double xpow = ki*xerror+kd*xderivative;
-            double ypow = 0.45*yerror+0.05*yderivative;
+            double xpow = 0.45*xerror+0.05*xderivative;
+            double ypow = ki*yerror+kd*yderivative;
             double hpow = 0.3*herror+0.01*hderivative;
 
-            double rotX = xpow * Math.cos(-pos.h) - ypow * Math.sin(-pos.h);
-            double rotY = xpow * Math.sin(-pos.h) + ypow * Math.cos(-pos.h);
+            double rotX = xpow * Math.cos(Math.toRadians(pos.h)) - ypow * Math.sin(Math.toRadians(pos.h));
+            double rotY = xpow * Math.sin(Math.toRadians(pos.h)) + ypow * Math.cos(Math.toRadians(pos.h));
 
             motorFrontLeft.setPower(Math.max(-1,Math.min(1,(rotY + rotX - hpow))));
             motorBackLeft.setPower(Math.max(-1,Math.min(1,(rotY - rotX - hpow))));
@@ -491,8 +491,8 @@ public class AutowithOtos2 extends OpMode
             motorBackRight.setPower(Math.max(-1,Math.min(1,(rotY + rotX + hpow))));
 
             prevxerror = xerror;
-            prevyerror = yerror
-            prevherror = herror
+            prevyerror = yerror;
+            prevherror = herror;
             
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
