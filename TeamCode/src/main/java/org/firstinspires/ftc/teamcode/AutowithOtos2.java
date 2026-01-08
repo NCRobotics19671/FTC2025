@@ -142,7 +142,8 @@ public class AutowithOtos2 extends OpMode
     public void start() {
         runtime.reset();
         pos = myOtos.getPosition();
-        driveYdir(-30);
+        DrivetoCoords(0,0,90)
+        /*driveYdir(-30);
         turntoangle(0);
         shoot(-1300);
         driveYdir(-5);
@@ -157,7 +158,8 @@ public class AutowithOtos2 extends OpMode
         wheel.setPower(1);
         driveYdir(20);
         Arm.setPower(0);
-        wheel.setPower(0);
+        wheel.setPower(0);*/
+
 
     }
 
@@ -477,16 +479,16 @@ public class AutowithOtos2 extends OpMode
             hderivative = (herror-prevherror)/(getRuntime()-t);
             t = getRuntime();
             double xpow = ki*xerror+kd*xderivative;
-            double ypow = ki*yerror+kd*yderivative;
-            double hpow = ki*herror+kd*hderivative;
+            double ypow = 0.45*yerror+0.05*yderivative;
+            double hpow = 0.3*herror+0.01*hderivative;
 
             double rotX = xpow * Math.cos(-pos.h) - ypow * Math.sin(-pos.h);
             double rotY = xpow * Math.sin(-pos.h) + ypow * Math.cos(-pos.h);
 
-            motorFrontLeft.setPower(Math.max(-1,Math.min(1,(rotY + rotX + hpow))));
-            motorBackLeft.setPower(Math.max(-1,Math.min(1,(rotY - rotX + hpow))));
-            motorFrontRight.setPower(Math.max(-1,Math.min(1,(rotY - rotX - hpow))));
-            motorBackRight.setPower(Math.max(-1,Math.min(1,(rotY + rotX - hpow))));
+            motorFrontLeft.setPower(Math.max(-1,Math.min(1,(rotY + rotX - hpow))));
+            motorBackLeft.setPower(Math.max(-1,Math.min(1,(rotY - rotX - hpow))));
+            motorFrontRight.setPower(Math.max(-1,Math.min(1,(rotY - rotX + hpow))));
+            motorBackRight.setPower(Math.max(-1,Math.min(1,(rotY + rotX + hpow))));
 
             prevxerror = xerror;
             prevyerror = yerror
