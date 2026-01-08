@@ -30,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp
 
-public class MainRobot2025Improved extends OpMode
+public class PracticeDrive extends OpMode
 {
     // Declare OpMode members.
 
@@ -106,9 +106,8 @@ public class MainRobot2025Improved extends OpMode
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Alien.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Tell the driver that initialization is complete.
@@ -165,7 +164,7 @@ public class MainRobot2025Improved extends OpMode
 
         if(gamepad1.x) {
 
-            Alien.setVelocity(-1450);
+            Alien.setVelocity(-1900);
         }
         else {
 
@@ -173,9 +172,9 @@ public class MainRobot2025Improved extends OpMode
 
                Alien.setVelocity(-3000);
             } else if (gamepad1.y) {
-                Alien.setVelocity(-1300);
+                Alien.setVelocity(-1500);
             } else if (gamepad1.a) {
-                Alien.setVelocity(-1200);
+                Alien.setVelocity(-1300);
             } else{
                 if(gamepad1.dpad_up){
                     Alien.setVelocity(2600);
@@ -212,7 +211,7 @@ public class MainRobot2025Improved extends OpMode
 
 
 
-        telemetry.addData("ShooterSpeed", Alien.getVelocity());
+        telemetry.addData("Alien", Alien.getCurrentPosition());
         telemetry.addData("Arm", Arm.getCurrentPosition());
         telemetry.addData("Right Front", motorFrontRight.getCurrentPosition());
         telemetry.addData("Left Front", motorFrontLeft.getCurrentPosition());

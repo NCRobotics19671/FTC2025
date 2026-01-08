@@ -18,11 +18,9 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,7 +32,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
 
-public class AutowithOtos extends OpMode
+public class AutoTest extends OpMode
 {
     // Declare OpMode members.
 
@@ -143,18 +141,21 @@ public class AutowithOtos extends OpMode
         runtime.reset();
         pos = myOtos.getPosition();
         driveYdir(-30);
-        //turntoangle(0);
-        //shoot(-1250);
-        driveYdir(-32);
-//        double t = getRuntime() + 8;
-//        while(getRuntime() < t){}
+        turntoangle(0);
+        double t = getRuntime() + 10;
+        while(getRuntime() < t){}
+        driveYdir(-29);
+        t = getRuntime() + 10;
+        while(getRuntime() < t){}
         pos = myOtos.getPosition();
-        //driveYdir(-59/1.2-pos.y);
+        driveYdir(-59/1.2-pos.y);
         turntoangle(40);
         //driveXdir(-15);
         //turntoangle(40);
         Arm.setPower(1);
         wheel.setPower(1);
+        t = getRuntime() + 10;
+        while(getRuntime() < t){}
         driveYdir(26);
         Arm.setPower(0);
         wheel.setPower(0);
@@ -392,7 +393,7 @@ public class AutowithOtos extends OpMode
         pos = myOtos.getPosition();
         double botheading = pos.h;
         double target = ang;
-        double epsilon = 0.05;
+        double epsilon = 0.3;
         double derivative;
 
         double t = getRuntime() - 1;
@@ -405,7 +406,7 @@ public class AutowithOtos extends OpMode
             error = (target-botheading);
             derivative = (error-preverror)/(getRuntime()-t);
             t = getRuntime();
-            double motorpower = Math.max(-1,Math.min(1,(0.1*error+0.01*derivative)));
+            double motorpower = Math.max(-1,Math.min(1,(0.30*error+0.01*derivative)));
             motorFrontLeft.setPower(-motorpower);
             motorBackLeft.setPower(-motorpower);
             motorFrontRight.setPower(motorpower);
