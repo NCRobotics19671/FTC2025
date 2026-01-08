@@ -476,13 +476,22 @@ public class AutowithOtos2 extends OpMode
             yderivative = (yerror-prevyerror)/(getRuntime()-t)
             hderivative = (herror-prevherror)/(getRuntime()-t);
             t = getRuntime();
-            double motorpower = Math.max(-1,Math.min(1,(ki*error+kd*derivative)));
-            motorFrontLeft.setPower(motorpower);
-            motorBackLeft.setPower(motorpower);
-            motorFrontRight.setPower(motorpower);
-            motorBackRight.setPower(motorpower);
+            double xpow = ki*xerror+kd*xderivative;
+            double ypow = ki*yerror+kd*yderivative;
+            double hpow = ki*herror+kd*hderivative;
 
-            preverror = error;
+            double rotX = xpow * Math.cos(-pos.h) - ypow * Math.sin(-pos.h);
+            double rotY = xpow * Math.sin(-pos.h) + ypow * Math.cos(-pos.h);
+
+            motorFrontLeft.setPower(Math.max(-1,Math.min(1,(rotY + rotX + hpow))));
+            motorBackLeft.setPower(Math.max(-1,Math.min(1,(rotY - rotX + hpow))));
+            motorFrontRight.setPower(Math.max(-1,Math.min(1,(rotY - rotX - hpow))));
+            motorBackRight.setPower(Math.max(-1,Math.min(1,(rotY + rotX - hpow))));
+
+            prevxerror = xerror;
+            prevyerror = yerror
+            prevherror = herror
+            
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
             telemetry.addData("Heading angle", pos.h);
