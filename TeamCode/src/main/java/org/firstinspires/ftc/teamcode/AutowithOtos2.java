@@ -483,6 +483,7 @@ public class AutowithOtos2 extends OpMode
             double hpow = 0.3*herror+0.01*hderivative;
 
             double rotX = xpow * Math.cos(Math.toRadians(-pos.h)) - ypow * Math.sin(Math.toRadians(-pos.h));
+            rotX = rotX*1.1;
             double rotY = xpow * Math.sin(Math.toRadians(-pos.h)) + ypow * Math.cos(Math.toRadians(-pos.h));
             double denominator = Math.max(Math.abs(ypow) + Math.abs(xpow) + Math.abs(hpow), 1);
             motorFrontLeft.setPower((rotY + rotX - hpow)/denominator);

@@ -142,7 +142,7 @@ public class AutoManTest extends OpMode
     public void start() {
         runtime.reset();
         pos = myOtos.getPosition();
-        DrivetoCoords(10,0,90);
+        //DrivetoCoords(10,0,90);
         /*driveYdir(-30);
         turntoangle(0);
         shoot(-1300);
@@ -181,6 +181,17 @@ public class AutoManTest extends OpMode
 
 
         pos = myOtos.getPosition();
+        double xpow = gamepad1.left_stick_x;
+        double ypow = -gamepad1.left_stick_y;
+        double hpow = gamepad1.right_stick_x;
+        double rotX = xpow * Math.cos(Math.toRadians(-pos.h)) - ypow * Math.sin(Math.toRadians(-pos.h));
+        rotX = rotX*1.1;
+        double rotY = xpow * Math.sin(Math.toRadians(-pos.h)) + ypow * Math.cos(Math.toRadians(-pos.h));
+        double denominator = Math.max(Math.abs(ypow) + Math.abs(xpow) + Math.abs(hpow), 1);
+        motorFrontLeft.setPower((rotY + rotX - hpow)/denominator);
+        motorBackLeft.setPower((rotY - rotX - hpow)/denominator);
+        motorFrontRight.setPower((rotY - rotX + hpow)/denominator);
+        motorBackRight.setPower((rotY + rotX + hpow)/denominator);
         telemetry.addData("X coordinate", pos.x);
         telemetry.addData("Y coordinate", pos.y);
         telemetry.addData("Heading angle", pos.h);
