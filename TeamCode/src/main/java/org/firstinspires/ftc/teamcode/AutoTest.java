@@ -156,7 +156,7 @@ public class AutoTest extends OpMode
         wheel.setPower(1);
         t = getRuntime() + 10;
         while(getRuntime() < t){}
-        driveYdir(26);
+        driveYdir(-26);
         Arm.setPower(0);
         wheel.setPower(0);
 

@@ -18,11 +18,9 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,7 +32,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
 
-public class AutowithOtos extends OpMode
+public class FarAuto2 extends OpMode
 {
     // Declare OpMode members.
 
@@ -142,22 +140,26 @@ public class AutowithOtos extends OpMode
     public void start() {
         runtime.reset();
         pos = myOtos.getPosition();
-        driveYdir(-30);
-        //turntoangle(0);
-        //shoot(-1250);
-        driveYdir(-32);
+        DrivetoCoords(-1,8,30);
+        shoot(-3000);
+        DrivetoCoords(-20,1,0);
+        /*driveYdir(-30);
+        turntoangle(0);
+        shoot(-1300);
+        driveYdir(-5);
 //        double t = getRuntime() + 8;
 //        while(getRuntime() < t){}
         pos = myOtos.getPosition();
-        //driveYdir(-59/1.2-pos.y);
+        driveYdir(-35/1.2-pos.y);
         turntoangle(40);
-        //driveXdir(-15);
-        //turntoangle(40);
+        driveXdir(-15);
+        turntoangle(40);
         Arm.setPower(1);
         wheel.setPower(1);
-        driveYdir(26);
+        driveYdir(20);
         Arm.setPower(0);
-        wheel.setPower(0);
+        wheel.setPower(0);*/
+
 
     }
 
@@ -313,13 +315,8 @@ public class AutowithOtos extends OpMode
     }
 
     private void driveYdir(double dist){
-
         dist = dist/1.2;
         pos = myOtos.getPosition();
-        //SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(pos.x, pos.y, 0);
-       // myOtos.setPosition(currentPosition);
-       // double xtarget = pos.x + dist*Math.sin(pos.h);
-
         double target = pos.y + dist;
         double epsilon = 0.3;
         double derivative;
@@ -343,7 +340,7 @@ public class AutowithOtos extends OpMode
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
             telemetry.addData("Heading angle", pos.h);
-            telemetry.addData("targ", target);
+
             telemetry.update();
         }
         motorFrontLeft.setPower(0);
@@ -355,8 +352,6 @@ public class AutowithOtos extends OpMode
     private void driveXdir(double dist){
         dist = dist/1.1;
         pos = myOtos.getPosition();
-      //  SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(pos.x, pos.y, 0);
-      //  myOtos.setPosition(currentPosition);
         double target = pos.x + dist;
         double epsilon = 0.5;
         double derivative;
@@ -392,7 +387,7 @@ public class AutowithOtos extends OpMode
         pos = myOtos.getPosition();
         double botheading = pos.h;
         double target = ang;
-        double epsilon = 0.05;
+        double epsilon = 0.3;
         double derivative;
 
         double t = getRuntime() - 1;
@@ -405,7 +400,7 @@ public class AutowithOtos extends OpMode
             error = (target-botheading);
             derivative = (error-preverror)/(getRuntime()-t);
             t = getRuntime();
-            double motorpower = Math.max(-1,Math.min(1,(0.1*error+0.01*derivative)));
+            double motorpower = Math.max(-1,Math.min(1,(0.30*error+0.01*derivative)));
             motorFrontLeft.setPower(-motorpower);
             motorBackLeft.setPower(-motorpower);
             motorFrontRight.setPower(motorpower);
@@ -424,16 +419,64 @@ public class AutowithOtos extends OpMode
 
 
     }
-
-
     private void shoot(double power){
         Alien.setVelocity(power);
-        pos = myOtos.getPosition();
         double t = getRuntime() + 3;
         while(getRuntime() < t){
-            telemetry.addData("X coordinate", pos.x);
-            telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("Heading angle", pos.h);
+            telemetry.addData("speed",Alien.getVelocity());
+            telemetry.update();
+        }
+        Arm.setPower(1);
+        wheel.setPower(-1);
+        t = getRuntime() + 0.75;
+        while(getRuntime() < t){}
+        Arm.setPower(0);
+        wheel.setPower(0);
+        t = getRuntime() + 1;
+        while(getRuntime() < t){}
+        Arm.setPower(1);
+        wheel.setPower(-1);
+        t = getRuntime() + 0.75;
+        while(getRuntime() < t){}
+        Arm.setPower(0);
+        wheel.setPower(0);
+        t = getRuntime() + 1;
+        while(getRuntime() < t){}
+        Arm.setPower(1);
+        wheel.setPower(-1);
+        t = getRuntime() + 0.75;
+        while(getRuntime() < t){}
+        Arm.setPower(0);
+        wheel.setPower(0);
+        Alien.setPower(0);
+    }
+    private void shoot2(double power){
+        Alien.setVelocity(power);
+        double t = getRuntime() + 3;
+        while(getRuntime() < t){
+            telemetry.addData("speed",Alien.getVelocity());
+            telemetry.update();
+        }
+        Arm.setPower(1);
+        wheel.setPower(-1);
+        t = getRuntime() + 0.75;
+        while(getRuntime() < t){}
+        Arm.setPower(0);
+        wheel.setPower(0);
+        t = getRuntime() + 0.5;
+        while(getRuntime() < t){}
+        Arm.setPower(1);
+        wheel.setPower(-1);
+        t = getRuntime() + 0.75;
+        while(getRuntime() < t){}
+        Arm.setPower(0);
+        wheel.setPower(0);
+        Alien.setPower(0);
+    }
+    private void shoot1(double power){
+        Alien.setVelocity(power);
+        double t = getRuntime() + 3;
+        while(getRuntime() < t){
             telemetry.addData("speed",Alien.getVelocity());
             telemetry.update();
         }
@@ -441,24 +484,133 @@ public class AutowithOtos extends OpMode
         wheel.setPower(-1);
         t = getRuntime() + 1;
         while(getRuntime() < t){}
-        Arm.setPower(0);
-        wheel.setPower(0);
-        t = getRuntime() + 1;
-        while(getRuntime() < t){}
-        Arm.setPower(1);
-        wheel.setPower(-1);
-        t = getRuntime() + 1;
-        while(getRuntime() < t){}
-        Arm.setPower(0);
-        wheel.setPower(0);
-        t = getRuntime() + 1;
-        while(getRuntime() < t){}
-        Arm.setPower(1);
-        wheel.setPower(-1);
-        t = getRuntime() + 2;
-        while(getRuntime() < t){}
+
         Arm.setPower(0);
         wheel.setPower(0);
         Alien.setPower(0);
+    }
+    private void DrivetoCoords(double x, double y, double h){
+        //x = x/1.2;
+        //y = y/1.2;
+        pos = myOtos.getPosition();
+        double ytarget = y;
+        double xtarget = x;
+        double htarget = h;
+        double epsilon = 0.25;
+        double xderivative;
+        double yderivative;
+        double hderivative;
+        double t = getRuntime() - 1;
+        double yerror = (ytarget-pos.y);
+        double xerror = (xtarget-pos.x);
+        double herror = (htarget-pos.h);
+        double prevxerror = xerror;
+        double prevyerror = yerror;
+        double prevherror = herror;
+        while(Math.abs(xerror)>epsilon || Math.abs(yerror)>epsilon || Math.abs(herror)>epsilon){
+
+            pos = myOtos.getPosition();
+            yerror = (ytarget-pos.y);
+            xerror = (xtarget-pos.x);
+            herror = (htarget-pos.h);
+            xderivative = (xerror-prevxerror)/(getRuntime()-t);
+            yderivative = (yerror-prevyerror)/(getRuntime()-t);
+            hderivative = (herror-prevherror)/(getRuntime()-t);
+            t = getRuntime();
+            double xpow = 0.45*xerror+0.05*xderivative;
+            double ypow = ki*yerror+kd*yderivative;
+            double hpow = 0.3*herror+0.01*hderivative;
+
+            double rotX = xpow * Math.cos(Math.toRadians(-pos.h)) - ypow * Math.sin(Math.toRadians(-pos.h));
+            rotX = rotX*1.1;
+            double rotY = xpow * Math.sin(Math.toRadians(-pos.h)) + ypow * Math.cos(Math.toRadians(-pos.h));
+            double denominator = Math.max(Math.abs(ypow) + Math.abs(xpow) + Math.abs(hpow), 1);
+            motorFrontLeft.setPower((rotY + rotX - hpow)/denominator);
+            motorBackLeft.setPower((rotY - rotX - hpow)/denominator);
+            motorFrontRight.setPower((rotY - rotX + hpow)/denominator);
+            motorBackRight.setPower((rotY + rotX + hpow)/denominator);
+
+            prevxerror = xerror;
+            prevyerror = yerror;
+            prevherror = herror;
+            telemetry.addData("x", Math.abs(xerror)>epsilon);
+            telemetry.addData("y", Math.abs(yerror)>epsilon);
+            telemetry.addData("h", Math.abs(herror)>epsilon);
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
+            telemetry.addData("xerror",xerror);
+            telemetry.addData("yerror",yerror);
+            telemetry.addData("herror",herror);
+            telemetry.update();
+        }
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
+    }
+    private void DrivePickup(double x, double y, double h){
+        //x = x/1.2;
+        Arm.setPower(1);
+        wheel.setPower(1);
+        //y = y/1.2;
+        pos = myOtos.getPosition();
+        double ytarget = y;
+        double xtarget = x;
+        double htarget = h;
+        double epsilon = 0.9;
+        double xderivative;
+        double yderivative;
+        double hderivative;
+        double t = getRuntime() - 1;
+        double yerror = (ytarget-pos.y);
+        double xerror = (xtarget-pos.x);
+        double herror = (htarget-pos.h);
+        double prevxerror = xerror;
+        double prevyerror = yerror;
+        double prevherror = herror;
+        while(Math.abs(xerror)>epsilon || Math.abs(yerror)>epsilon || Math.abs(herror)>epsilon){
+
+            pos = myOtos.getPosition();
+            yerror = (ytarget-pos.y);
+            xerror = (xtarget-pos.x);
+            herror = (htarget-pos.h);
+            xderivative = (xerror-prevxerror)/(getRuntime()-t);
+            yderivative = (yerror-prevyerror)/(getRuntime()-t);
+            hderivative = (herror-prevherror)/(getRuntime()-t);
+            t = getRuntime();
+            double xpow = 0.45*xerror+0.05*xderivative;
+            double ypow = ki*yerror+kd*yderivative;
+            double hpow = 0.3*herror+0.01*hderivative;
+
+            double rotX = xpow * Math.cos(Math.toRadians(-pos.h)) - ypow * Math.sin(Math.toRadians(-pos.h));
+            rotX = rotX*1.1;
+            double rotY = xpow * Math.sin(Math.toRadians(-pos.h)) + ypow * Math.cos(Math.toRadians(-pos.h));
+            double denominator = 2.5*Math.max(Math.abs(ypow) + Math.abs(xpow) + Math.abs(hpow), 1);
+            motorFrontLeft.setPower((rotY + rotX - hpow)/denominator);
+            motorBackLeft.setPower((rotY - rotX - hpow)/denominator);
+            motorFrontRight.setPower((rotY - rotX + hpow)/denominator);
+            motorBackRight.setPower((rotY + rotX + hpow)/denominator);
+
+            prevxerror = xerror;
+            prevyerror = yerror;
+            prevherror = herror;
+            telemetry.addData("x", Math.abs(xerror)>epsilon);
+            telemetry.addData("y", Math.abs(yerror)>epsilon);
+            telemetry.addData("h", Math.abs(herror)>epsilon);
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
+            telemetry.addData("xerror",xerror);
+            telemetry.addData("yerror",yerror);
+            telemetry.addData("herror",herror);
+            telemetry.update();
+        }
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
+        Arm.setPower(0);
+        wheel.setPower(0);
     }
 }
